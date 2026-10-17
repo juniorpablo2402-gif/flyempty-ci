@@ -24,3 +24,103 @@
 .admin-table td code{font-size:10px;overflow-wrap:anywhere;white-space:normal}.admin-table td select{max-width:160px;min-width:130px}.admin-table td>small{display:block;font-size:9px;line-height:1.5;color:#78847b;margin-top:5px}
 @media(max-width:900px){.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.flight-admin-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.admin-tools{align-items:stretch;flex-direction:column}.admin-tools input,.admin-tools select{width:100%}.admin-list-heading{flex-direction:column}.admin-add{width:100%;justify-content:space-between}.flight-admin-form{grid-template-columns:1fr;padding:16px}.flight-admin-form .full-field,.flight-admin-form>button{grid-column:auto}.admin-tabs button{padding:13px 12px}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-table td select{min-width:140px}}
+
+
+/* FlyEmpty CI — design alignment pass, guided by UI/UX Pro Max
+   Preserve approved brand system: deep green, champagne gold, ivory. */
+:root{
+  --green:#0b211b;--green-2:#12372c;--gold:#c9a96a;--cream:#f7f5ef;
+  --ink:#15251f;--muted:#69776d;--line:#e5e5dc;
+  --surface:#fff;--surface-soft:#f0efe7;
+  --shadow-soft:0 18px 50px rgba(11,33,27,.08);
+  --ease-premium:cubic-bezier(.2,.75,.25,1);
+}
+::selection{background:rgba(201,169,106,.3);color:var(--green)}
+body{line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.header,.request-header{gap:18px}
+.brand{flex-shrink:0}
+.nav-cta,.reset-button,.admin-action,.search-button,.card-footer button,.modal-action{
+  transition:background-color .18s var(--ease-premium),border-color .18s var(--ease-premium),color .18s var(--ease-premium),box-shadow .18s var(--ease-premium),transform .18s var(--ease-premium);
+}
+.search-button:hover,.modal-action:hover,.card-footer button:hover,.admin-action:hover{
+  box-shadow:0 8px 22px rgba(11,33,27,.15);transform:translateY(-1px)
+}
+.nav-cta:hover{border-color:var(--gold);background:#fff}
+.flight-card{border-radius:2px}
+.flight-card:focus-within{outline:2px solid var(--gold);outline-offset:3px}
+.search-panel,.request-shell,.admin-login-card,.admin-stats article,.flight-admin-form,.admin-table-wrap{
+  box-shadow:var(--shadow-soft)
+}
+.search-panel{border-top:2px solid var(--gold)}
+.section-top{gap:24px}
+.demo-disclaimer{border-radius:0}
+.request-shell{border-top:3px solid var(--gold)}
+.request-intro{position:relative;overflow:hidden}
+.request-intro:after{content:"";position:absolute;width:300px;height:300px;border:1px solid rgba(201,169,106,.18);border-radius:50%;right:-180px;bottom:-130px;box-shadow:0 0 0 35px rgba(201,169,106,.035),0 0 0 70px rgba(201,169,106,.025);pointer-events:none}
+.request-form-wrap{min-width:0}
+.request-form-wrap input,.request-form-wrap select,.request-form-wrap textarea,
+.admin-login-card input{border-radius:0;transition:border-color .18s,box-shadow .18s}
+.request-form-wrap input:focus,.request-form-wrap select:focus,.request-form-wrap textarea:focus,
+.admin-login-card input:focus,.flight-admin-form input:focus,.flight-admin-form select:focus{
+  border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,106,.16);outline:none
+}
+/* Private console shares the public site's editorial aviation identity. */
+.admin-page{background:linear-gradient(180deg,#f0efe7 0,#f7f5ef 360px)}
+.admin-top{min-height:84px;box-shadow:0 6px 24px rgba(11,33,27,.035)}
+.admin-content{margin-top:48px}
+.admin-content>.eyebrow{margin-bottom:10px}
+.admin-content>h1{font-size:clamp(38px,5vw,58px);letter-spacing:-.055em}
+.admin-content>h1 em{color:#b28c4b}
+.admin-stats article{position:relative;overflow:hidden;border-top:2px solid var(--gold);transition:transform .2s var(--ease-premium),box-shadow .2s var(--ease-premium)}
+.admin-stats article:hover{transform:translateY(-2px);box-shadow:0 20px 45px rgba(11,33,27,.1)}
+.admin-stats article strong{font-size:clamp(25px,3vw,34px);color:var(--green)}
+.admin-tabs{gap:4px;border-bottom-color:#d8d9cf}
+.admin-tabs button{min-height:48px;transition:color .18s,border-color .18s,background-color .18s}
+.admin-tabs button:hover{background:rgba(201,169,106,.08);color:var(--green)}
+.admin-tabs button.active{border-bottom-width:3px}
+.admin-tools input,.admin-tools select,.admin-table td select{border-radius:0}
+.admin-table-wrap{border-color:#e3e3d9}
+.admin-table th{position:sticky;top:0;z-index:1;background:#eeede5}
+.admin-table tbody tr{transition:background-color .15s}
+.admin-table tbody tr:hover{background:#fbfaf6}
+.admin-table th{white-space:nowrap}
+.admin-table td{line-height:1.55}
+.admin-table td strong{color:#20352a}
+.status-pill{font-weight:700;white-space:nowrap}
+.status-pending,.status-draft{background:#f5eddc;color:#765820}
+.status-published{background:#e2efe4;color:#28613a}
+.status-cancelled,.status-declined{background:#f8e8e5;color:#8e3e31}
+.admin-notice{box-shadow:0 8px 24px rgba(11,33,27,.05)}
+.admin-action{min-height:44px}
+.flight-admin-form{border-top:2px solid var(--gold)}
+.modal{box-shadow:0 28px 90px rgba(0,0,0,.28)}
+.modal-backdrop{backdrop-filter:blur(3px)}
+button:disabled{cursor:not-allowed;opacity:.58;transform:none!important;box-shadow:none!important}
+@media(max-width:760px){
+  .admin-content{margin-top:32px}
+  .admin-content>h1{font-size:clamp(34px,8vw,44px)}
+  .admin-top{gap:14px}
+  .admin-greeting{line-height:1.5}
+  .admin-table-wrap{box-shadow:0 10px 28px rgba(11,33,27,.055)}
+}
+@media(max-width:600px){
+  .wrap{width:calc(100% - 32px)}
+  .header nav{gap:8px}
+  .hero h1{letter-spacing:-.06em}
+  .search-panel{box-shadow:0 16px 44px rgba(0,0,0,.17)}
+  .admin-content{width:calc(100% - 32px);margin:28px auto}
+  .admin-top{padding:16px}
+  .admin-top>div{align-items:flex-start;flex-direction:column}
+  .admin-top .reset-button{min-height:44px}
+  .admin-stats article{min-height:78px}
+  .admin-tabs{margin-top:24px}
+  .admin-tabs button{min-height:48px;font-size:11px}
+  .admin-table{min-width:720px}
+  .request-shell{width:calc(100% - 24px)}
+  .request-form-wrap{padding:24px 18px}
+  .modal-backdrop{padding:12px}
+  .modal{max-height:calc(100dvh - 24px);overflow:auto}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;scroll-behavior:auto!important}
+}
