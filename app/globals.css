@@ -124,3 +124,35 @@ button:disabled{cursor:not-allowed;opacity:.58;transform:none!important;box-shad
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;scroll-behavior:auto!important}
 }
+
+
+/* Real aviation imagery — UI/UX Pro Max editorial image treatment */
+.hero:before{
+  background-image:
+    linear-gradient(90deg,rgba(8,28,22,.93) 0%,rgba(8,28,22,.75) 38%,rgba(8,28,22,.18) 100%),
+    linear-gradient(0deg,rgba(8,28,22,.34),transparent 44%),
+    url('https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&fit=crop&w=2200&q=88');
+  background-position:center,center,center 53%;
+  background-size:cover,cover,cover;
+}
+.aviation-gallery{padding:66px 0 82px;background:#eeede5}
+.aviation-gallery-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:22px}
+.aviation-gallery-head p{margin:0;color:#748077;font-size:12px}
+.aviation-gallery-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px}
+.aviation-photo{position:relative;isolation:isolate;overflow:hidden;margin:0;min-height:280px;background:#15251f}
+.aviation-photo-main{min-height:390px}
+.aviation-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .65s cubic-bezier(.2,.75,.25,1);z-index:-2}
+.aviation-photo:hover img{transform:scale(1.035)}
+.aviation-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,19,14,.83),rgba(5,19,14,.02) 72%);z-index:-1}
+.aviation-photo figcaption{position:absolute;left:25px;right:25px;bottom:24px;display:flex;flex-direction:column;gap:9px;color:#fff}
+.aviation-photo figcaption span{font-size:9px;letter-spacing:.18em;color:#dfc58f;font-weight:700}
+.aviation-photo figcaption strong{max-width:430px;font:500 clamp(20px,2.5vw,30px)/1.2 Manrope,sans-serif;letter-spacing:-.035em}
+.aviation-photo-secondary figcaption strong{font-size:clamp(19px,2vw,25px)}
+@media(max-width:600px){
+ .hero:before{background-position:center,center,62% center}
+ .aviation-gallery{padding:48px 0 54px}
+ .aviation-gallery-head{align-items:flex-start;flex-direction:column;gap:10px}
+ .aviation-gallery-grid{grid-template-columns:1fr;gap:12px}
+ .aviation-photo-main,.aviation-photo{min-height:255px}
+ .aviation-photo figcaption{left:18px;right:18px;bottom:18px}
+}
