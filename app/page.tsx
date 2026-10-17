@@ -33,6 +33,27 @@ export default function Home() {
   const [liveFlights, setLiveFlights] = useState<Flight[]>([]);
   const [liveCatalogueLoaded, setLiveCatalogueLoaded] = useState(false);
   useEffect(() => { let active = true; fetch("/api/flights", { cache: "no-store" }).then(r => r.ok ? r.json() : Promise.reject()).then(body => { if (!active) return; const mapped: Flight[] = (body.flights ?? []).map((f: {id:string;origin_city:string;origin_code:string;destination_city:string;destination_code:string;departure_at:string;estimated_duration_minutes:number;indicative_price_xof:number;available_seats:number;flight_type:string}) => ({ id:f.id, from:f.origin_city, to:f.destination_city, code:f.origin_code+" → "+f.destination_code, date:new Date(f.departure_at).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase(), time:new Date(f.departure_at).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), duration:f.estimated_duration_minutes >= 60 ? Math.floor(f.estimated_duration_minutes/60)+" h "+(f.estimated_duration_minutes%60 ? f.estimated_duration_minutes%60+" min" : "") : f.estimated_duration_minutes+" min", price:f.indicative_price_xof, seats:f.available_seats, kind:f.flight_type==="empty_leg"?"Vol à vide":f.flight_type==="available_seats"?"Sièges disponibles":"Vol de repositionnement", isDemo:false })); setLiveFlights(mapped); setLiveCatalogueLoaded(true); }).catch(() => { if(active) setLiveCatalogueLoaded(true); }); return () => { active = false; }; }, []);
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+    const targets = document.querySelectorAll(".flights-section, .flight-card, .aviation-gallery-head, .aviation-photo, .concept-inner, .footer-inner");
+    if (!("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove("fe-reveal-hidden");
+          entry.target.classList.add("fe-reveal-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
+    targets.forEach((target) => {
+      target.classList.add("fe-reveal", "fe-reveal-hidden");
+      observer.observe(target);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   const catalogue = liveFlights.length ? liveFlights : demoFlights.map(f => ({...f,isDemo:true}));
   const usingDemo = liveFlights.length === 0;
   const flights = useMemo(() => catalogue.filter((f) =>
