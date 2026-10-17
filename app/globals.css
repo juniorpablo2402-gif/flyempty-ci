@@ -212,3 +212,13 @@ button:disabled{cursor:not-allowed;opacity:.58;transform:none!important;box-shad
     transition:none!important;
   }
 }
+
+
+/* Scroll-triggered motion: visible on mobile as well as desktop */
+@keyframes fe-scroll-reveal{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.fe-reveal{opacity:1;transform:none}
+.fe-reveal.fe-reveal-hidden{opacity:0;transform:translate3d(0,28px,0)}
+.fe-reveal.fe-reveal-visible{animation:fe-scroll-reveal .8s cubic-bezier(.2,.75,.25,1) both}
+.aviation-photo.fe-reveal-visible{animation-duration:1s}
+.flight-card.fe-reveal-visible{animation-duration:.65s}
+@media(prefers-reduced-motion:reduce){.fe-reveal,.fe-reveal.fe-reveal-hidden,.fe-reveal.fe-reveal-visible{opacity:1!important;transform:none!important;animation:none!important}}
