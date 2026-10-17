@@ -101,6 +101,13 @@ export default function Home() {
         <div className="demo-disclaimer">{usingDemo ? "IMPORTANT — Aucun vol réel n’est publié pour le moment. Ces données fictives servent uniquement à tester l’interface." : "IMPORTANT — Les demandes restent soumises à vérification de disponibilité et de tarif. Aucun vol n’est réservé et aucun paiement n’est effectué sur ce site."}</div>
       </section>
 
+      <section className="aviation-gallery" aria-label="Univers de l’aviation privée">
+        <div className="aviation-gallery-head wrap"><div className="eyebrow dark"><span /> L’EXPÉRIENCE AÉRONAUTIQUE</div><p>Une autre perspective sur les déplacements régionaux.</p></div>
+        <div className="aviation-gallery-grid wrap">
+          <figure className="aviation-photo aviation-photo-main"><img src="https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&fit=crop&w=1500&q=85" alt="Jet privé sur le tarmac au coucher du soleil" loading="lazy"/><figcaption><span>01 / AVIATION PRIVÉE</span><strong>Le voyage commence avant le décollage.</strong></figcaption></figure>
+          <figure className="aviation-photo aviation-photo-secondary"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1000&q=85" alt="Vue aérienne depuis un avion au-dessus des nuages" loading="lazy"/><figcaption><span>02 / VUE DU CIEL</span><strong>Le ciel, autrement.</strong></figcaption></figure>
+        </div>
+      </section>
       <section className="concept" id="concept"><div className="wrap concept-inner"><div><div className="eyebrow"><span /> LE CONCEPT FLYEMPTY</div><h2>Le bon vol.<br /><em>Au bon moment.</em></h2></div><div className="concept-copy"><p>Certains avions doivent rejoindre une autre ville, même sans passagers. D’autres vols disposent de sièges qui n’ont pas encore trouvé preneur.</p><p>FlyEmpty CI ambitionne de rendre ces opportunités plus visibles, avec une demande simple et une confirmation directement auprès des opérateurs partenaires.</p><span className="concept-note">UN PROJET EN CONSTRUCTION · CÔTE D’IVOIRE</span></div></div></section>
 
       <footer className="footer"><div className="wrap footer-inner"><a className="brand" href="#"><span className="brand-mark">F</span><span>FLYEMPTY<span className="brand-ci"> CI</span><small>L’AVIATION, AUTREMENT</small></span></a><span>© 2026 FLYEMPTY CI · PROTOTYPE EN CONSTRUCTION</span><a href="#vols">Retour en haut ↑</a></div></footer>
