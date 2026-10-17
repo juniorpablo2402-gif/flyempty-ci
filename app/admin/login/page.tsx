@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 export default function AdminLoginPage() {
   const [error, setError] = useState("");
@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
     if (!url || !key) { setError("La connexion à la base n’est pas configurée."); setBusy(false); return; }
-    const supabase = createClient(url, key);
+    const supabase = createBrowserClient(url, key);
     const { error: authError } = await supabase.auth.signInWithPassword({ email: String(form.get("email")), password: String(form.get("password")) });
     if (authError) { setError("Connexion impossible. Vérifiez vos identifiants ou l’accès au compte."); setBusy(false); return; }
     window.location.assign("/admin");
