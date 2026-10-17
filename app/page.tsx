@@ -47,8 +47,7 @@ export default function Home() {
   }
 
   function requestBooking(flight: Flight) {
-    setNotice("Demande de démonstration préparée pour " + flight.code + ". Aucun vol réel n’est réservé : contactez l’opérateur pour confirmer les disponibilités.");
-    setSelected(null);
+    window.location.href = "/reservation";
   }
 
   return (
@@ -56,7 +55,7 @@ export default function Home() {
       <div className="demo-bar"><span className="demo-dot" /> VERSION DÉMO · Les vols et tarifs affichés sont fictifs et non réservables</div>
       <header className="header wrap">
         <a className="brand" href="#" aria-label="FlyEmpty CI accueil"><span className="brand-mark">F</span><span>FLYEMPTY<span className="brand-ci"> CI</span><small>L’AVIATION, AUTREMENT</small></span></a>
-        <nav><a href="#vols">Explorer les vols</a><a href="#concept">Le concept</a><a className="nav-cta" href="#vols">Trouver un vol <span>↗</span></a></nav>
+        <nav><a href="#vols">Explorer les vols</a><a href="#concept">Le concept</a><a className="nav-cta" href="/reservation">Demander un vol <span>↗</span></a></nav>
       </header>
 
       <section className="hero">
