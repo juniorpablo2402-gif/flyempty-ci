@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Flight = {
-  id: number;
+  id: number | string;
   from: string;
   to: string;
   code: string;
@@ -13,6 +13,7 @@ type Flight = {
   price: number;
   seats: number;
   kind: string;
+  isDemo?: boolean;
 };
 
 const demoFlights: Flight[] = [
@@ -29,11 +30,16 @@ export default function Home() {
   const [date, setDate] = useState("");
   const [selected, setSelected] = useState<Flight | null>(null);
   const [notice, setNotice] = useState("");
-  const flights = useMemo(() => demoFlights.filter((f) =>
+  const [liveFlights, setLiveFlights] = useState<Flight[]>([]);
+  const [liveCatalogueLoaded, setLiveCatalogueLoaded] = useState(false);
+  useEffect(() => { let active = true; fetch("/api/flights", { cache: "no-store" }).then(r => r.ok ? r.json() : Promise.reject()).then(body => { if (!active) return; const mapped: Flight[] = (body.flights ?? []).map((f: {id:string;origin_city:string;origin_code:string;destination_city:string;destination_code:string;departure_at:string;estimated_duration_minutes:number;indicative_price_xof:number;available_seats:number;flight_type:string}) => ({ id:f.id, from:f.origin_city, to:f.destination_city, code:f.origin_code+" → "+f.destination_code, date:new Date(f.departure_at).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase(), time:new Date(f.departure_at).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), duration:f.estimated_duration_minutes >= 60 ? Math.floor(f.estimated_duration_minutes/60)+" h "+(f.estimated_duration_minutes%60 ? f.estimated_duration_minutes%60+" min" : "") : f.estimated_duration_minutes+" min", price:f.indicative_price_xof, seats:f.available_seats, kind:f.flight_type==="empty_leg"?"Vol à vide":f.flight_type==="available_seats"?"Sièges disponibles":"Vol de repositionnement", isDemo:false })); setLiveFlights(mapped); setLiveCatalogueLoaded(true); }).catch(() => { if(active) setLiveCatalogueLoaded(true); }); return () => { active = false; }; }, []);
+  const catalogue = liveFlights.length ? liveFlights : demoFlights.map(f => ({...f,isDemo:true}));
+  const usingDemo = liveFlights.length === 0;
+  const flights = useMemo(() => catalogue.filter((f) =>
     (origin === "Toutes les villes" || f.from === origin) &&
     (destination === "Toutes les villes" || f.to === destination) &&
     (!date || f.date.includes(date))
-  ), [origin, destination, date]);
+  ), [catalogue, origin, destination, date]);
 
   function swapRoute() {
     setOrigin(destination);
@@ -52,7 +58,7 @@ export default function Home() {
 
   return (
     <main>
-      <div className="demo-bar"><span className="demo-dot" /> VERSION DÉMO · Les vols et tarifs affichés sont fictifs et non réservables</div>
+      {usingDemo && <div className="demo-bar"><span className="demo-dot" /> VERSION DÉMO · Les vols et tarifs affichés sont fictifs et non réservables</div>}
       <header className="header wrap">
         <a className="brand" href="#" aria-label="FlyEmpty CI accueil"><span className="brand-mark">F</span><span>FLYEMPTY<span className="brand-ci"> CI</span><small>L’AVIATION, AUTREMENT</small></span></a>
         <nav><a href="#vols">Explorer les vols</a><a href="#concept">Le concept</a><a className="nav-cta" href="/reservation">Demander un vol <span>↗</span></a></nav>
@@ -81,18 +87,18 @@ export default function Home() {
       </section>
 
       <section className="flights-section wrap" id="vols">
-        <div className="section-top"><div><div className="eyebrow dark"><span /> LES OPPORTUNITÉS</div><h2>Des trajets à <em>redécouvrir.</em></h2><p>Exemples de présentation — disponibilités à confirmer auprès des opérateurs.</p></div><div className="results-tools"><span className="count">{flights.length.toString().padStart(2, "0")} <small>EXEMPLES</small></span><button className="reset-button" type="button" onClick={resetSearch}>Réinitialiser <span>↺</span></button></div></div>
+        <div className="section-top"><div><div className="eyebrow dark"><span /> LES OPPORTUNITÉS</div><h2>Des trajets à <em>redécouvrir.</em></h2><p>{usingDemo ? "Exemples de présentation — aucune offre réelle publiée pour le moment." : "Offres publiées par l’équipe — disponibilité et tarif final à confirmer manuellement."}</p></div><div className="results-tools"><span className="count">{flights.length.toString().padStart(2, "0")} <small>{usingDemo ? "EXEMPLES" : "OFFRES"}</small></span><button className="reset-button" type="button" onClick={resetSearch}>Réinitialiser <span>↺</span></button></div></div>
         {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice("")} aria-label="Fermer">×</button></div>}
         <div className="flight-grid">
           {flights.map((flight) => <article className="flight-card" key={flight.id}>
             <div className="flight-card-top"><span className="flight-type"><i /> {flight.kind}</span><span className="flight-index">0{flight.id}</span></div>
             <div className="route"><div><span className="airport-code">{flight.code.split(" → ")[0]}</span><strong>{flight.from}</strong></div><div className="route-line"><span>✈</span><i /></div><div className="destination"><span className="airport-code">{flight.code.split(" → ")[1]}</span><strong>{flight.to}</strong></div></div>
             <div className="flight-meta"><div><span>DATE</span><strong>{flight.date}</strong></div><div><span>DÉPART</span><strong>{flight.time}</strong></div><div><span>DURÉE EST.</span><strong>{flight.duration}</strong></div></div>
-            <div className="card-footer"><div><span>À PARTIR DE</span><strong>{money(flight.price)}</strong><small>par personne · prix fictif</small></div><button onClick={() => setSelected(flight)}>Détails <span>↗</span></button></div>
+            <div className="card-footer"><div><span>À PARTIR DE</span><strong>{money(flight.price)}</strong><small>par personne · {flight.isDemo ? "prix fictif" : "prix indicatif à confirmer"}</small></div><button onClick={() => setSelected(flight)}>Détails <span>↗</span></button></div>
           </article>)}
           {flights.length === 0 && <div className="empty-state">Aucun exemple ne correspond à cette recherche. Modifiez les villes ou réinitialisez les filtres.</div>}
         </div>
-        <div className="demo-disclaimer">IMPORTANT — FlyEmpty CI ne confirme aucun vol dans cette version. Les données sont fictives et servent uniquement à tester l’interface.</div>
+        <div className="demo-disclaimer">{usingDemo ? "IMPORTANT — Aucun vol réel n’est publié pour le moment. Ces données fictives servent uniquement à tester l’interface." : "IMPORTANT — Les demandes restent soumises à vérification de disponibilité et de tarif. Aucun vol n’est réservé et aucun paiement n’est effectué sur ce site."}</div>
       </section>
 
       <section className="concept" id="concept"><div className="wrap concept-inner"><div><div className="eyebrow"><span /> LE CONCEPT FLYEMPTY</div><h2>Le bon vol.<br /><em>Au bon moment.</em></h2></div><div className="concept-copy"><p>Certains avions doivent rejoindre une autre ville, même sans passagers. D’autres vols disposent de sièges qui n’ont pas encore trouvé preneur.</p><p>FlyEmpty CI ambitionne de rendre ces opportunités plus visibles, avec une demande simple et une confirmation directement auprès des opérateurs partenaires.</p><span className="concept-note">UN PROJET EN CONSTRUCTION · CÔTE D’IVOIRE</span></div></div></section>
