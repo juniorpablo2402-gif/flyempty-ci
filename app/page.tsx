@@ -35,6 +35,17 @@ export default function Home() {
     (!date || f.date.includes(date))
   ), [origin, destination, date]);
 
+  function swapRoute() {
+    setOrigin(destination);
+    setDestination(origin);
+  }
+
+  function resetSearch() {
+    setOrigin("Toutes les villes");
+    setDestination("Toutes les villes");
+    setDate("");
+  }
+
   function requestBooking(flight: Flight) {
     setNotice("Demande de démonstration préparée pour " + flight.code + ". Aucun vol réel n’est réservé : contactez l’opérateur pour confirmer les disponibilités.");
     setSelected(null);
@@ -59,7 +70,7 @@ export default function Home() {
             <div className="search-heading"><span>VOTRE PROCHAIN TRAJET</span><span className="search-step">01 <i>/</i> 03</span></div>
             <div className="search-fields">
               <label><span>AU DÉPART DE</span><select value={origin} onChange={e => setOrigin(e.target.value)}><option>Toutes les villes</option><option>Abidjan</option><option>San-Pédro</option><option>Bouaké</option><option>Korhogo</option></select></label>
-              <div className="swap">⇄</div>
+              <button className="swap" type="button" onClick={swapRoute} aria-label="Inverser le départ et la destination" title="Inverser le trajet">⇄</button>
               <label><span>À DESTINATION DE</span><select value={destination} onChange={e => setDestination(e.target.value)}><option>Toutes les villes</option><option>Abidjan</option><option>San-Pédro</option><option>Bouaké</option><option>Korhogo</option></select></label>
               <label className="date-field"><span>DATE SOUHAITÉE (OPTIONNEL)</span><input aria-label="Date souhaitée" value={date} onChange={e => setDate(e.target.value.toUpperCase())} placeholder="Ex. 22 OCT. 2026" /></label>
               <a className="search-button" href="#vols">Explorer <span>↗</span></a>
@@ -71,7 +82,7 @@ export default function Home() {
       </section>
 
       <section className="flights-section wrap" id="vols">
-        <div className="section-top"><div><div className="eyebrow dark"><span /> LES OPPORTUNITÉS</div><h2>Des trajets à <em>redécouvrir.</em></h2><p>Exemples de présentation — disponibilités à confirmer auprès des opérateurs.</p></div><span className="count">{flights.length.toString().padStart(2, "0")} <small>EXEMPLES</small></span></div>
+        <div className="section-top"><div><div className="eyebrow dark"><span /> LES OPPORTUNITÉS</div><h2>Des trajets à <em>redécouvrir.</em></h2><p>Exemples de présentation — disponibilités à confirmer auprès des opérateurs.</p></div><div className="results-tools"><span className="count">{flights.length.toString().padStart(2, "0")} <small>EXEMPLES</small></span><button className="reset-button" type="button" onClick={resetSearch}>Réinitialiser <span>↺</span></button></div></div>
         {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice("")} aria-label="Fermer">×</button></div>}
         <div className="flight-grid">
           {flights.map((flight) => <article className="flight-card" key={flight.id}>
