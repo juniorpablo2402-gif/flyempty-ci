@@ -1,19 +1,21 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import AdminDashboard from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
-
-type RequestRow = { id: string; reference_code: string; origin_city: string; destination_city: string; requested_departure_date: string | null; passenger_count: number; contact_name: string; contact_email: string | null; contact_phone: string; status: string; created_at: string; customer_message: string | null };
 
 export default async function AdminPage() {
   let supabase;
   try { supabase = createSupabaseServerClient(); } catch { redirect("/admin/login"); }
   const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect("/admin/login");
-  const { data: profile } = await supabase.from("profiles").select("role,display_name").eq("id", claimsData.claims.sub).maybeSingle();
+  const userId = claimsData?.claims?.sub;
+  if (!userId) redirect("/admin/login");
+  const { data: profile } = await supabase.from("profiles").select("role,display_name").eq("id", userId).maybeSingle();
   if (profile?.role !== "admin") return <main className="admin-page"><div className="admin-top"><Link className="brand" href="/"><span className="brand-mark">F</span><span>FLYEMPTY CI<small>ESPACE ADMINISTRATEUR</small></span></Link></div><section className="admin-denied"><h1>Accès non autorisé.</h1><p>Votre compte est connecté, mais ne dispose pas du rôle administrateur. Demandez à un administrateur principal de vous attribuer cet accès.</p><Link className="back-link" href="/">Retour au site</Link></section></main>;
-  const { data, error } = await supabase.from("reservation_requests").select("id,reference_code,origin_city,destination_city,requested_departure_date,passenger_count,contact_name,contact_email,contact_phone,status,created_at,customer_message").order("created_at",{ascending:false}).limit(100);
-  const rows = (data ?? []) as RequestRow[];
-  return <main className="admin-page"><header className="admin-top"><Link className="brand" href="/"><span className="brand-mark">F</span><span>FLYEMPTY<span className="brand-ci"> CI</span><small>ESPACE ADMINISTRATEUR</small></span></Link><div><span className="admin-greeting">Bonjour, {profile.display_name || "administrateur"}</span><form action="/auth/signout" method="post"><button className="reset-button">Se déconnecter ↗</button></form></div></header><section className="admin-content"><div className="eyebrow dark"><span /> PILOTAGE DES DEMANDES</div><h1>Votre <em>tableau de bord.</em></h1><p className="admin-lead">Les demandes sont à traiter manuellement. Aucune confirmation de vol ni aucun paiement n’est déclenché par ce tableau.</p><div className="admin-stats"><article><span>DEMANDES VISIBLES</span><strong>{rows.length}</strong></article><article><span>EN ATTENTE</span><strong>{rows.filter(r=>r.status==="pending").length}</strong></article><article><span>TRAITÉES / AUTRES STATUTS</span><strong>{rows.filter(r=>r.status!=="pending").length}</strong></article></div>{error && <p className="form-error">Impossible de charger les demandes. Vérifiez les politiques d’accès de la base.</p>}<div className="admin-list-heading"><h2>Demandes récentes</h2><span>100 dernières maximum</span></div>{rows.length===0 ? <div className="admin-empty">Aucune demande enregistrée pour le moment.</div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Référence / date</th><th>Trajet</th><th>Client</th><th>Passagers</th><th>Statut</th></tr></thead><tbody>{rows.map(row=><tr key={row.id}><td><strong>{row.reference_code}</strong><small>{new Date(row.created_at).toLocaleString("fr-FR",{dateStyle:"medium",timeStyle:"short"})}</small></td><td>{row.origin_city} → {row.destination_city}<small>{row.requested_departure_date || "Date flexible"}</small></td><td><strong>{row.contact_name}</strong><small>{row.contact_phone}{row.contact_email ? " · "+row.contact_email : ""}</small>{row.customer_message && <details><summary>Message client</summary><p>{row.customer_message}</p></details>}</td><td>{row.passenger_count}</td><td><span className={"status-pill status-"+row.status}>{row.status}</span></td></tr>)}</tbody></table></div>}<p className="admin-footnote">Pour cette première version, le tableau est en lecture seule. La gestion des statuts sera ajoutée après validation de l’accès admin et du flux de demande.</p></section></main>;
+  const [{ data: requests }, { data: flights }] = await Promise.all([
+    supabase.from("reservation_requests").select("id,reference_code,origin_city,destination_city,requested_departure_date,passenger_count,contact_name,contact_email,contact_phone,status,created_at,customer_message,admin_notes").order("created_at", { ascending: false }).limit(250),
+    supabase.from("flights").select("*").order("departure_at", { ascending: false }).limit(250),
+  ]);
+  return <AdminDashboard initialReservations={requests ?? []} initialFlights={flights ?? []} displayName={profile.display_name || "administrateur"} />;
 }
